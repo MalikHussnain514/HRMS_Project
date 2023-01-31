@@ -52,10 +52,28 @@ export const addEmployee = asyncHandler(async (req, res) => {
     req.body;
 
     
-    const isExists = await EmployeeModel.findOne({ contact });
+    const isExistWithContact = await UsersModel.findOne({ contact });
+    const isExistWithEmail = await UsersModel.findOne({ email });
     
-    if (isExists) {
-      throw new Error("Epmloyee Already exist with this contact number");
+    if (isExistWithContact) {
+      return res
+        .status(409)
+        .json(
+          useErrorResponse(
+            "Employee Already exist with this phone number",
+            res.statusCode
+          )
+        );
+    }
+    if (isExistWithEmail) {
+      return res
+        .status(409)
+        .json(
+          useErrorResponse(
+            "Employee Already exist with this email address",
+            res.statusCode
+          )
+        );
     }
     // const userId = "63c66cb9547c4e16a4e23c20";
     const userId = req.user._id;
@@ -79,8 +97,6 @@ export const addEmployee = asyncHandler(async (req, res) => {
     joiningDate,
     employeeId,
     userId: mongoose.Types.ObjectId(user._id),
-    // fullName,
-    // contact,
     designation,
     workingDay,
     basicPay,
@@ -168,7 +184,7 @@ export const authEmployee = asyncHandler(async (req, res) => {
 // Request: GET
 // Route: GET /api/employees/allemployees
 // Access: Private
-export const getAllEmployees = asyncHandler(async (req, res) => {
+export const getAllEmployeesWithDetails = asyncHandler(async (req, res) => {
 
   const employees = await EmployeeModel.find({}).populate('userId');
   // const employees = await UsersModel.aggregate([
@@ -193,4 +209,48 @@ export const getAllEmployees = asyncHandler(async (req, res) => {
   
   res.status(200).json({employees, totalNumberOfRecords: total});
 
+});
+
+// Request: GET
+// Route: GET /api/employees/allemployees
+// Access: Private
+export const getAllEmployees = asyncHandler(async (req, res) => {
+
+  const employees = await EmployeeModel.find({}).populate('userId', 'fullName').select('_id');
+  
+  res.status(200).json(employees);
+
+});
+
+
+export const updateEmployee = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const {
+    userDetail,
+    employeeDetail,
+  } = req.body;
+
+  
+  const updatedUser = await UsersModel.updateOne(
+    { _id: userId },
+    {
+      $set: {
+        ...userDetail,
+      },
+    },
+    { new: true }
+  );
+
+
+    const updatedEmployee = await EmployeeModel.updateOne(
+      { userId: userId },
+      {
+        $set: {
+          ...employeeDetail,
+        },
+      },
+      { new: true }
+    );
+  
+  res.status(202).json(success("Information updated Successfully"));
 });

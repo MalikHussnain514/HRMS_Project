@@ -16,7 +16,7 @@ import { success, useErrorResponse } from "../utils/apiResponse.js";
 // Access: Public
 export const userLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
+  
   if (!email || !password) {
     return res
       .status(422)

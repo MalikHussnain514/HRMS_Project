@@ -12,14 +12,18 @@ import {
 import {
   addEmployee,
   authEmployee,
+  getAllEmployeesWithDetails,
   getAllEmployees,
-  addRole
+  updateEmployee,
+  addRole,
 } from "../controllers/employeeController.js";
 
 
 router.post("/addEmployee", protectRoute, addEmployee);
+router.put("/updateEmployee/:userId", updateEmployee);
 router.post("/login", authEmployee);
-router.get("/", getAllEmployees);
+router.get("/", getAllEmployeesWithDetails);
+router.get("/get", getAllEmployees);
 router.post("/addRole", addRole);
 
 export default router;

@@ -10,13 +10,14 @@ dotenv.config();
 
 export const protectRoute = asyncHandler(async (req, res, next) => {
   let token;
-
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
       token = req.headers.authorization.split(" ")[1];
+      console.log("token is here", token);
+
       const decodedToken = await jwt.verify(token, process.env.jwt_secret);
       // console.log('decoded token', decodedToken.id)
       

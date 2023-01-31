@@ -15,20 +15,6 @@ const employeeSchema = new mongoose.Schema({
   employeeId: {
     type: Number,
   },
-  // email: {
-  //   type: String,
-  //   match: [
-  //     /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-  //     "Please fill a valid email address",
-  //   ],
-  //   unique: true,
-  // },
-  // fullName: {
-  //   type: String,
-  // },
-  // contact: {
-  //   type: String,
-  // },
   designation: {
     type: String,
   },

@@ -7,12 +7,10 @@ const router = express.Router();
 
 // controller
 import {
-  createClient,
-  getAllClients,
-  getClientById,
-  updateClient,
-  deleteClient,
-} from "../controllers/clientController.js";
+  createOvertime,
+    updateOvertime,
+    getAllOvertime,
+} from "../controllers/overtimeController.js";
 
 // validator
 // import {
@@ -21,14 +19,9 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addClient", createClient);
-router.get("/", getAllClients);
-router.get("/profile/:clientId", getClientById);
-router.put(
-  "/update/:clientId",
-  updateClient
-);
-router.delete("/delete/:clientId", deleteClient);
+router.post("/addOvertime", createOvertime);
+router.get("/", getAllOvertime);
+router.put("/update/:overtimeId", updateOvertime);
 
 // router.post("/login/:branchId", loginClient);
 

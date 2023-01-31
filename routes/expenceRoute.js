@@ -7,12 +7,12 @@ const router = express.Router();
 
 // controller
 import {
-  createClient,
-  getAllClients,
-  getClientById,
-  updateClient,
-  deleteClient,
-} from "../controllers/clientController.js";
+  createExpence,
+  //   getAllReferences,
+  //   getReferenceById,
+  updateExpence,
+  getAllExpences,
+} from "../controllers/expenceController.js";
 
 // validator
 // import {
@@ -21,14 +21,13 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addClient", createClient);
-router.get("/", getAllClients);
-router.get("/profile/:clientId", getClientById);
+router.post("/addExpence", createExpence);
+router.get("/", getAllExpences);
+// router.get("/", getAllReferences);
+// router.get("/profile/:referenceId", getReferenceById);
 router.put(
-  "/update/:clientId",
-  updateClient
+  "/update/:expenceId", updateExpence
 );
-router.delete("/delete/:clientId", deleteClient);
 
 // router.post("/login/:branchId", loginClient);
 

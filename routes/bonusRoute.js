@@ -7,12 +7,10 @@ const router = express.Router();
 
 // controller
 import {
-  createClient,
-  getAllClients,
-  getClientById,
-  updateClient,
-  deleteClient,
-} from "../controllers/clientController.js";
+  addBonus,
+  updateBonus,
+  bonusList,
+} from "../controllers/bonusController.js";
 
 // validator
 // import {
@@ -21,14 +19,9 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addClient", createClient);
-router.get("/", getAllClients);
-router.get("/profile/:clientId", getClientById);
-router.put(
-  "/update/:clientId",
-  updateClient
-);
-router.delete("/delete/:clientId", deleteClient);
+router.post("/addBonus", addBonus);
+router.get("/", bonusList);
+router.put("/update/:bonusId", updateBonus);
 
 // router.post("/login/:branchId", loginClient);
 

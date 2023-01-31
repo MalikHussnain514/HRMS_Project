@@ -18,6 +18,11 @@ import employeeRoute from "./routes/employeeRoute.js";
 import userRoute from "./routes/userRoute.js";
 
 import clientRoute from "./routes/clientRoute.js";
+import referenceRoute from "./routes/referenceRoute.js";
+import expenceRoute from "./routes/expenceRoute.js";
+import overtimeRoute from "./routes/overtimeRoute.js";
+import bonusRoute from "./routes/bonusRoute.js";
+import salaryStatementRoute from "./routes/salaryStatementRoute.js";
 
 // import imageUploadRoute from "./routes/imageUploadRoute.js";
 
@@ -59,6 +64,11 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/role", employeeRoute);
 
 app.use("/api/v1/client", clientRoute);
+app.use("/api/v1/reference", referenceRoute);
+app.use("/api/v1/expence", expenceRoute);
+app.use("/api/v1/overtime", overtimeRoute);
+app.use("/api/v1/bonus", bonusRoute);
+app.use("/api/v1/salaryStatement", salaryStatementRoute);
 
 // app.use("/api/v1/image-upload", imageUploadRoute);
 
