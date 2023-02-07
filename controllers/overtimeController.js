@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 // Models
 import OvertimeModel from "../models/OvertimeModel.js";
+import EmployeeModel from "../models/EmployeeModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
@@ -16,6 +17,16 @@ import { success, useErrorResponse } from "../utils/apiResponse.js";
 export const createOvertime = asyncHandler(async (req, res, next) => {
   const { userId, overtimeDate, designation, overtimeHours, overtimeAmount } =
     req.body;
+
+  const userExist = await EmployeeModel.findOne({ userId });
+
+  if (!userExist) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse("Employee does not exist with this Id", res.statusCode)
+      );
+  }
 
   // Create new expence
   const overtime = await OvertimeModel.create({
@@ -58,7 +69,6 @@ export const updateOvertime = asyncHandler(async (req, res) => {
 
   res.status(200).json(success("Overtime updated Successfully"));
 });
-
 
 // Request: GET
 // Route: GET /api/v1/overtime/

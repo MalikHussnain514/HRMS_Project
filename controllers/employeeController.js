@@ -19,72 +19,77 @@ import AdminModel from "../models/AdminModel.js";
 import { success, useErrorResponse } from "../utils/apiResponse.js";
 // import { spaceRemoving } from "../utils/removeSpacing.js";
 
-
-
 export const addRole = asyncHandler(async (req, res) => {
-    const {
-      role,
-      isActive,
-    } = req.body;
-    const roles = await RoleModel.create({
-      role,
-      isActive
-    });
+  const { role, isActive } = req.body;
+  const roles = await RoleModel.create({
+    role,
+    isActive,
+  });
 
-    const data = {
-      _id: role._id,
-      role: roles.role,
-      isActive: roles.idActive,
-    };
-    if (roles) {
-      res
-        .status(200)
-        .json(success("Role Added Successfully", data, res.statusCode));
-    }
-})
-
+  const data = {
+    _id: role._id,
+    role: roles.role,
+    isActive: roles.idActive,
+  };
+  if (roles) {
+    res
+      .status(200)
+      .json(success("Role Added Successfully", data, res.statusCode));
+  }
+});
 
 // Request: POST
 // Route: POST /api/v1/users/register
 // Access: Public
 export const addEmployee = asyncHandler(async (req, res) => {
-  const { joiningDate, employeeId, fullName, contact, email, password, designation, workingDay, basicPay, gender, addReference } =
-    req.body;
+  const {
+    joiningDate,
+    fullName,
+    contact,
+    email,
+    password,
+    designation,
+    workingDay,
+    basicPay,
+    gender,
+    addReference,
+  } = req.body;
 
-    
-    const isExistWithContact = await UsersModel.findOne({ contact });
-    const isExistWithEmail = await UsersModel.findOne({ email });
-    
-    if (isExistWithContact) {
-      return res
-        .status(409)
-        .json(
-          useErrorResponse(
-            "Employee Already exist with this phone number",
-            res.statusCode
-          )
-        );
-    }
-    if (isExistWithEmail) {
-      return res
-        .status(409)
-        .json(
-          useErrorResponse(
-            "Employee Already exist with this email address",
-            res.statusCode
-          )
-        );
-    }
-    // const userId = "63c66cb9547c4e16a4e23c20";
-    const userId = req.user._id;
-    console.log('userId from here',userId)
-    const {companyId} = await AdminModel.findOne({userId: mongoose.Types.ObjectId(userId)})
-    console.log('first', companyId)
+  const isExistWithContact = await UsersModel.findOne({ contact });
+  const isExistWithEmail = await UsersModel.findOne({ email });
+
+  if (isExistWithContact) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse(
+          "Employee Already exist with this phone number",
+          res.statusCode
+        )
+      );
+  }
+  if (isExistWithEmail) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse(
+          "Employee Already exist with this email address",
+          res.statusCode
+        )
+      );
+  }
+  // const userId = "63c66cb9547c4e16a4e23c20";
+  const userId = req.user._id;
+  console.log("userId from here", userId);
+  const { companyId } = await AdminModel.findOne({
+    userId: mongoose.Types.ObjectId(userId),
+  });
+  console.log("first", companyId);
 
   const roleId = await RoleModel.findOne({ role: roles.EMPLOYEE });
 
   // Create new user
-  
+
   const user = await UsersModel.create({
     fullName,
     contact,
@@ -92,10 +97,13 @@ export const addEmployee = asyncHandler(async (req, res) => {
     password,
     role: roleId._id,
   });
-  
+
+  const employeeIdCount = (await EmployeeModel.find().count()) + 1;
+  console.log("empCount1", employeeIdCount);
+
   const employee = await EmployeeModel.create({
     joiningDate,
-    employeeId,
+    employeeId: employeeIdCount,
     userId: mongoose.Types.ObjectId(user._id),
     designation,
     workingDay,
@@ -126,67 +134,65 @@ export const addEmployee = asyncHandler(async (req, res) => {
   }
 });
 
-
 export const authEmployee = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res
-        .status(422)
-        .json(
-          useErrorResponse("Please enter email and password", res.statusCode)
-        );
-    }
+  if (!email || !password) {
+    return res
+      .status(422)
+      .json(
+        useErrorResponse("Please enter email and password", res.statusCode)
+      );
+  }
 
-     const employee = await UsersModel.findOne({ email });
+  const employee = await UsersModel.findOne({ email });
 
-     if (!employee) {
-       return res
-         .status(422)
-         .json(useErrorResponse("No employee found", res.statusCode));
-     }
+  if (!employee) {
+    return res
+      .status(422)
+      .json(useErrorResponse("No employee found", res.statusCode));
+  }
 
-     const isMatched = await employee.matchPassword(password);
+  const isMatched = await employee.matchPassword(password);
 
-     if (!isMatched) {
-       return res
-         .status(422)
+  if (!isMatched) {
+    return res
+      .status(422)
 
-         .json(
-           useErrorResponse(
-             "Please enter Phone Number and password",
-             res.statusCode
-           )
-         );
-     }
+      .json(
+        useErrorResponse(
+          "Please enter Phone Number and password",
+          res.statusCode
+        )
+      );
+  }
 
-     const data = {
-       id: employee._id,
-       fullName: employee.fullName,
-       email: employee.email,
-       contact: employee.contact,
-       token: generateWebToken(employee._id),
-     };
+  const data = {
+    id: employee._id,
+    fullName: employee.fullName,
+    email: employee.email,
+    contact: employee.contact,
+    token: generateWebToken(employee._id),
+  };
 
-     if (employee && isMatched) {
-       res
-         .status(200)
-         .json(
-           success(
-             `Employee ${employee.fullName} loggedIn successfully`,
-             data,
-             res.statusCode
-           )
-         );
-     }
-})
+  if (employee && isMatched) {
+    res
+      .status(200)
+      .json(
+        success(
+          `Employee ${employee.fullName} loggedIn successfully`,
+          data,
+          res.statusCode
+        )
+      );
+  }
+});
 
 // Request: GET
 // Route: GET /api/employees/allemployees
 // Access: Private
 export const getAllEmployeesWithDetails = asyncHandler(async (req, res) => {
-
-  const employees = await EmployeeModel.find({}).populate('userId');
+  const employees = await EmployeeModel.find({}).populate("userId");
   // const employees = await UsersModel.aggregate([
   //     {
   //       $lookup: {
@@ -205,32 +211,26 @@ export const getAllEmployeesWithDetails = asyncHandler(async (req, res) => {
   //       },
   //     },
   // ]);
-  const total = employees.length
-  
-  res.status(200).json({employees, totalNumberOfRecords: total});
+  const total = employees.length;
 
+  res.status(200).json({ employees, totalNumberOfRecords: total });
 });
 
 // Request: GET
 // Route: GET /api/employees/allemployees
 // Access: Private
 export const getAllEmployees = asyncHandler(async (req, res) => {
+  const employees = await EmployeeModel.find({})
+    .populate("userId", "fullName")
+    .select("_id");
 
-  const employees = await EmployeeModel.find({}).populate('userId', 'fullName').select('_id');
-  
   res.status(200).json(employees);
-
 });
-
 
 export const updateEmployee = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const {
-    userDetail,
-    employeeDetail,
-  } = req.body;
+  const { userDetail, employeeDetail } = req.body;
 
-  
   const updatedUser = await UsersModel.updateOne(
     { _id: userId },
     {
@@ -241,16 +241,15 @@ export const updateEmployee = asyncHandler(async (req, res) => {
     { new: true }
   );
 
-
-    const updatedEmployee = await EmployeeModel.updateOne(
-      { userId: userId },
-      {
-        $set: {
-          ...employeeDetail,
-        },
+  const updatedEmployee = await EmployeeModel.updateOne(
+    { userId: userId },
+    {
+      $set: {
+        ...employeeDetail,
       },
-      { new: true }
-    );
-  
+    },
+    { new: true }
+  );
+
   res.status(202).json(success("Information updated Successfully"));
 });

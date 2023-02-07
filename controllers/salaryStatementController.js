@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 // Models
 import SalaryStatementModel from "../models/SalaryStatementModel.js";
+import EmployeeModel from "../models/EmployeeModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
@@ -23,6 +24,16 @@ export const addSalaryStatement = asyncHandler(async (req, res, next) => {
     providentFund,
     grossSalary,
   } = req.body;
+
+  const userExist = await EmployeeModel.findOne({ userId });
+
+  if (!userExist) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse("Employee does not exist with this Id", res.statusCode)
+      );
+  }
 
   // Create new bonus
   const salaryStatement = await SalaryStatementModel.create({
@@ -76,5 +87,7 @@ export const updateSalaryStatement = asyncHandler(async (req, res) => {
 export const salaryStatementList = asyncHandler(async (req, res) => {
   const salaryStatement = await SalaryStatementModel.find({});
 
-  res.status(200).json(success("Salary Statement List get Successful", salaryStatement));
+  res
+    .status(200)
+    .json(success("Salary Statement List get Successful", salaryStatement));
 });

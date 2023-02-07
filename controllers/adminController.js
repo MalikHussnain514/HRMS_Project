@@ -293,6 +293,7 @@ export const getAllAdmins = asyncHandler(async (req, res) => {
 export const getCountOfEmployeeAndClient = asyncHandler(async (req, res) => {
   const admins = await AdminModel.find({}).populate("userId");
   const employees = await EmployeeModel.find({}).populate("userId");
+  const test = await EmployeeModel.find().count();
 
   const totalAdmins = admins.length;
   const totalEmployees = employees.length;
@@ -300,6 +301,7 @@ export const getCountOfEmployeeAndClient = asyncHandler(async (req, res) => {
   res.status(200).json({
     totalNumberOfAdmins: totalAdmins,
     totalNumberOfEmployees: totalEmployees,
+    testMethod: test,
   });
 });
 

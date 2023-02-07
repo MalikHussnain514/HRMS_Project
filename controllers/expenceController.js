@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 // Models
 import ExpenceModel from "../models/ExpenceModel.js";
+import EmployeeModel from "../models/EmployeeModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
@@ -14,15 +15,20 @@ import { success, useErrorResponse } from "../utils/apiResponse.js";
 // Access: Public
 
 export const createExpence = asyncHandler(async (req, res, next) => {
-  const {
-    userId,
-    expenceDate,
-    expencePurpose,
-    expenceAmount,
-    chequeNo,
-  } = req.body;
+  const { userId, expenceDate, expencePurpose, expenceAmount, chequeNo } =
+    req.body;
 
-  // Create new expence
+  const userExist = await EmployeeModel.findOne({ userId });
+
+  if (!userExist) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse("Employee does not exist with this Id", res.statusCode)
+      );
+  }
+
+  // Create new Expence
   const expence = await ExpenceModel.create({
     userId,
     expenceDate,
@@ -64,13 +70,12 @@ export const updateExpence = asyncHandler(async (req, res) => {
   res.status(200).json(success("Expence updated Successfully"));
 });
 
-
 // Request: GET
 // Route: GET /api/v1/expence/
 // Access: Public
 
 export const getAllExpences = asyncHandler(async (req, res) => {
-    const expenses = await ExpenceModel.find({});
+  const expenses = await ExpenceModel.find({});
 
-    res.status(200).json(success("Expences List get Successful", expenses));
-})
+  res.status(200).json(success("Expences List get Successful", expenses));
+});

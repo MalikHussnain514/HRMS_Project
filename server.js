@@ -23,9 +23,10 @@ import expenceRoute from "./routes/expenceRoute.js";
 import overtimeRoute from "./routes/overtimeRoute.js";
 import bonusRoute from "./routes/bonusRoute.js";
 import salaryStatementRoute from "./routes/salaryStatementRoute.js";
+import holidayRoute from "./routes/holidayRoute.js";
+import providentFundRoute from "./routes/providentFundRoute.js";
 
 // import imageUploadRoute from "./routes/imageUploadRoute.js";
-
 
 // cors options
 const corsOptions = {
@@ -69,9 +70,10 @@ app.use("/api/v1/expence", expenceRoute);
 app.use("/api/v1/overtime", overtimeRoute);
 app.use("/api/v1/bonus", bonusRoute);
 app.use("/api/v1/salaryStatement", salaryStatementRoute);
+app.use("/api/v1/holiday", holidayRoute);
+app.use("/api/v1/providentFund", providentFundRoute);
 
 // app.use("/api/v1/image-upload", imageUploadRoute);
-
 
 // app.use((error, req, res, next) => {
 //   if (req.file) {
