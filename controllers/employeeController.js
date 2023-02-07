@@ -230,6 +230,7 @@ export const getAllEmployees = asyncHandler(async (req, res) => {
 export const updateEmployee = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const { userDetail, employeeDetail } = req.body;
+  // console.log(userId, userDetail, employeeDetail);
 
   const updatedUser = await UsersModel.updateOne(
     { _id: userId },

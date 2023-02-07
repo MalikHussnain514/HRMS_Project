@@ -53,6 +53,9 @@ export const updateProvidentFund = asyncHandler(async (req, res) => {
   const { providentFundId } = req.params;
   const { providentFundDetails } = req.body;
 
+  // const idExist = await ProvidentFundModel.find({ providentFundId });
+  // console.log("id exists", idExist);
+
   const updatedProvidentFund = await ProvidentFundModel.updateOne(
     { _id: providentFundId },
     {

@@ -7,6 +7,7 @@ import EmployeeModel from "../models/EmployeeModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
+import UsersModel from "../models/UsersModel.js";
 // import { spaceRemoving } from "../utils/removeSpacing.js";
 // import generateWebToken from "../utils/generateToken.js";
 
@@ -57,6 +58,14 @@ export const updateExpence = asyncHandler(async (req, res) => {
   const { expenceId } = req.params;
   const { expenceDetails } = req.body;
 
+  const idExist = await ExpenceModel.findOne({ _id: expenceId });
+
+  if (!idExist) {
+    return res
+      .status(409)
+      .json(useErrorResponse("No Expense found with this Id", res.statusCode));
+  }
+
   const updatedExpence = await ExpenceModel.updateOne(
     { _id: expenceId },
     {
@@ -75,7 +84,24 @@ export const updateExpence = asyncHandler(async (req, res) => {
 // Access: Public
 
 export const getAllExpences = asyncHandler(async (req, res) => {
-  const expenses = await ExpenceModel.find({});
+  // const expenses = await ExpenceModel.find({})
+  //   .populate("userId", "fullName")
+  //   .select("_id");
+  const expenses = await UsersModel.aggregate([
+    {
+      $lookup: {
+        from: "expences",
+        localField: "_id",
+        foreignField: "userId",
+        as: "expensesData",
+      },
+    },
+    {
+      $match: {
+        "expensesData.0": { $exists: true },
+      },
+    },
+  ]);
 
   res.status(200).json(success("Expences List get Successful", expenses));
 });
