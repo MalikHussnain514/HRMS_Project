@@ -7,6 +7,7 @@ import EmployeeModel from "../models/EmployeeModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
+import UsersModel from "../models/UsersModel.js";
 // import { spaceRemoving } from "../utils/removeSpacing.js";
 // import generateWebToken from "../utils/generateToken.js";
 
@@ -53,8 +54,17 @@ export const updateProvidentFund = asyncHandler(async (req, res) => {
   const { providentFundId } = req.params;
   const { providentFundDetails } = req.body;
 
-  // const idExist = await ProvidentFundModel.find({ providentFundId });
-  // console.log("id exists", idExist);
+  const idExist = await ProvidentFundModel.findOne({
+    _id: providentFundId,
+  });
+
+  if (!idExist) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse("No Provident Fund found with this Id", res.statusCode)
+      );
+  }
 
   const updatedProvidentFund = await ProvidentFundModel.updateOne(
     { _id: providentFundId },
@@ -73,7 +83,21 @@ export const updateProvidentFund = asyncHandler(async (req, res) => {
 // Route: GET /api/v1/providentFund/
 // Access: Public
 export const providentFundList = asyncHandler(async (req, res) => {
-  const providentFund = await ProvidentFundModel.find({});
+  const providentFund = await UsersModel.aggregate([
+    {
+      $lookup: {
+        from: "providentfunds",
+        localField: "_id",
+        foreignField: "userId",
+        as: "ProvidentFundData",
+      },
+    },
+    {
+      $match: {
+        "ProvidentFundData.0": { $exists: true },
+      },
+    },
+  ]);
 
   res
     .status(200)

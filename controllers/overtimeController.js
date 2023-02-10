@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 // Models
 import OvertimeModel from "../models/OvertimeModel.js";
 import EmployeeModel from "../models/EmployeeModel.js";
+import UsersModel from "../models/UsersModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
@@ -57,6 +58,14 @@ export const updateOvertime = asyncHandler(async (req, res) => {
   const { overtimeId } = req.params;
   const { overtimeDetails } = req.body;
 
+  const idExist = await OvertimeModel.findOne({ _id: overtimeId });
+
+  if (!idExist) {
+    return res
+      .status(409)
+      .json(useErrorResponse("No OverTime found with this Id", res.statusCode));
+  }
+
   const updatedOvertime = await OvertimeModel.updateOne(
     { _id: overtimeId },
     {
@@ -74,7 +83,23 @@ export const updateOvertime = asyncHandler(async (req, res) => {
 // Route: GET /api/v1/overtime/
 // Access: Public
 export const getAllOvertime = asyncHandler(async (req, res) => {
-  const overtime = await OvertimeModel.find({});
+  // const overtime = await OvertimeModel.find({});
+
+  const overtime = await UsersModel.aggregate([
+    {
+      $lookup: {
+        from: "overtimes",
+        localField: "_id",
+        foreignField: "userId",
+        as: "overTimeData",
+      },
+    },
+    {
+      $match: {
+        "overTimeData.0": { $exists: true },
+      },
+    },
+  ]);
 
   res.status(200).json(success("Overtime List get Successful", overtime));
 });

@@ -7,6 +7,7 @@ import EmployeeModel from "../models/EmployeeModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
+import UsersModel from "../models/UsersModel.js";
 // import { spaceRemoving } from "../utils/removeSpacing.js";
 // import generateWebToken from "../utils/generateToken.js";
 
@@ -51,6 +52,16 @@ export const updateHoliday = asyncHandler(async (req, res) => {
   const { holidayId } = req.params;
   const { holidayDetails } = req.body;
 
+  const idExist = await HolidayModel.findOne({
+    _id: holidayId,
+  });
+
+  if (!idExist) {
+    return res
+      .status(409)
+      .json(useErrorResponse("No Holidays found with this Id", res.statusCode));
+  }
+
   const updatedHoliday = await HolidayModel.updateOne(
     { _id: holidayId },
     {
@@ -68,7 +79,21 @@ export const updateHoliday = asyncHandler(async (req, res) => {
 // Route: GET /api/v1/salaryholidayStatement/
 // Access: Public
 export const holidayList = asyncHandler(async (req, res) => {
-  const holidays = await HolidayModel.find({});
+  const holidays = await UsersModel.aggregate([
+    {
+      $lookup: {
+        from: "holidays",
+        localField: "_id",
+        foreignField: "userId",
+        as: "holidayData",
+      },
+    },
+    {
+      $match: {
+        "holidayData.0": { $exists: true },
+      },
+    },
+  ]);
 
   res.status(200).json(success("Holiday List get Successful", holidays));
 });

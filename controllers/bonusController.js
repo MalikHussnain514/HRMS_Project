@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 // Models
 import BonusModel from "../models/BonusModel.js";
 import EmployeeModel from "../models/EmployeeModel.js";
+import UsersModel from "../models/UsersModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
@@ -56,6 +57,14 @@ export const updateBonus = asyncHandler(async (req, res) => {
   const { bonusId } = req.params;
   const { bonusDetails } = req.body;
 
+  const idExist = await BonusModel.findOne({ _id: bonusId });
+
+  if (!idExist) {
+    return res
+      .status(409)
+      .json(useErrorResponse("No Bonus found with this Id", res.statusCode));
+  }
+
   const updatedBonus = await BonusModel.updateOne(
     { _id: bonusId },
     {
@@ -73,7 +82,21 @@ export const updateBonus = asyncHandler(async (req, res) => {
 // Route: GET /api/v1/bonus/
 // Access: Public
 export const bonusList = asyncHandler(async (req, res) => {
-  const bonus = await BonusModel.find({});
+  const bonus = await UsersModel.aggregate([
+    {
+      $lookup: {
+        from: "bonus",
+        localField: "_id",
+        foreignField: "userId",
+        as: "bonusData",
+      },
+    },
+    {
+      $match: {
+        "bonusData.0": { $exists: true },
+      },
+    },
+  ]);
 
   res.status(200).json(success("Bonus List get Successful", bonus));
 });

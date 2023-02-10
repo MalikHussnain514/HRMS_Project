@@ -7,6 +7,7 @@ import EmployeeModel from "../models/EmployeeModel.js";
 
 // utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
+import UsersModel from "../models/UsersModel.js";
 // import { spaceRemoving } from "../utils/removeSpacing.js";
 // import generateWebToken from "../utils/generateToken.js";
 
@@ -68,6 +69,21 @@ export const updateSalaryStatement = asyncHandler(async (req, res) => {
   const { salaryStatementId } = req.params;
   const { salaryStatementDetails } = req.body;
 
+  const idExist = await SalaryStatementModel.findOne({
+    _id: salaryStatementId,
+  });
+
+  if (!idExist) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse(
+          "No Salary Statement found with this Id",
+          res.statusCode
+        )
+      );
+  }
+
   const updatedSalaryStatement = await SalaryStatementModel.updateOne(
     { _id: salaryStatementId },
     {
@@ -85,7 +101,21 @@ export const updateSalaryStatement = asyncHandler(async (req, res) => {
 // Route: GET /api/v1/salaryStatement/
 // Access: Public
 export const salaryStatementList = asyncHandler(async (req, res) => {
-  const salaryStatement = await SalaryStatementModel.find({});
+  const salaryStatement = await UsersModel.aggregate([
+    {
+      $lookup: {
+        from: "salarystatements",
+        localField: "_id",
+        foreignField: "userId",
+        as: "salaryStatementData",
+      },
+    },
+    {
+      $match: {
+        "salaryStatementData.0": { $exists: true },
+      },
+    },
+  ]);
 
   res
     .status(200)

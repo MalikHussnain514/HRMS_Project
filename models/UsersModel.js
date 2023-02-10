@@ -23,7 +23,7 @@ const usersSchema = new mongoose.Schema({
     required: [true, "Password is required"],
     minlength: [6, "Password Digits must be 6"],
   },
-  role: { type: mongoose.Schema.Types.ObjectId, ref: "RoleModel" },
+  role: { type: mongoose.Schema.Types.ObjectId, ref: "role" },
 });
 
 usersSchema.pre("save", async function (next) {

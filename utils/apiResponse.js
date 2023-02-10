@@ -10,7 +10,6 @@ export const success = (message, data, statusCode) => {
 export const useErrorResponse = (message, statusCode) => {
   return {
     message,
-    error: true,
     success: false,
     statusCode,
   };

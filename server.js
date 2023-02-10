@@ -25,6 +25,7 @@ import bonusRoute from "./routes/bonusRoute.js";
 import salaryStatementRoute from "./routes/salaryStatementRoute.js";
 import holidayRoute from "./routes/holidayRoute.js";
 import providentFundRoute from "./routes/providentFundRoute.js";
+import incrementRoute from "./routes/incrementRoute.js";
 
 // import imageUploadRoute from "./routes/imageUploadRoute.js";
 
@@ -72,6 +73,7 @@ app.use("/api/v1/bonus", bonusRoute);
 app.use("/api/v1/salaryStatement", salaryStatementRoute);
 app.use("/api/v1/holiday", holidayRoute);
 app.use("/api/v1/providentFund", providentFundRoute);
+app.use("/api/v1/increment", incrementRoute);
 
 // app.use("/api/v1/image-upload", imageUploadRoute);
 

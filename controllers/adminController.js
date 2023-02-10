@@ -43,10 +43,29 @@ export const adminRegister = asyncHandler(async (req, res) => {
     req.body;
 
   // Check if admin is exist
-  const isExists = await UsersModel.findOne({ email });
 
-  if (isExists) {
-    throw new Error("Admin Already exist with this email number");
+  const isExistWithContact = await UsersModel.findOne({ contact });
+  const isExistWithEmail = await UsersModel.findOne({ email });
+
+  if (isExistWithContact) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse(
+          "Employee Already exist with this phone number",
+          res.statusCode
+        )
+      );
+  }
+  if (isExistWithEmail) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse(
+          "Employee Already exist with this email address",
+          res.statusCode
+        )
+      );
   }
 
   const roleId = await RoleModel.findOne({ role: roles.ADMIN });
