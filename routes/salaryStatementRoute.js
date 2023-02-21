@@ -10,6 +10,7 @@ import {
   addSalaryStatement,
   salaryStatementList,
   updateSalaryStatement,
+  deleteSalaryStatement,
 } from "../controllers/salaryStatementController.js";
 
 // validator
@@ -19,9 +20,10 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addSalaryStatement", addSalaryStatement);
+router.post("/addSalaryStatement/:userId", addSalaryStatement);
 router.get("/", salaryStatementList);
 router.put("/update/:salaryStatementId", updateSalaryStatement);
+router.delete("/delete/:salaryStatementId", deleteSalaryStatement);
 
 // router.post("/login/:branchId", loginClient);
 

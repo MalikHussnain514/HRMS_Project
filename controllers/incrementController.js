@@ -15,7 +15,8 @@ import UsersModel from "../models/UsersModel.js";
 // Route: POST /api/v1/increment/addIncrement
 // Access: Public
 export const addIncrement = asyncHandler(async (req, res, next) => {
-  const { userId, incrementDate, incrementAmount, incrementPurpose } = req.body;
+  const { incrementDate, incrementAmount, incrementPurpose } = req.body;
+  const { userId } = req.params;
 
   const userExist = await EmployeeModel.findOne({ userId });
 
@@ -101,3 +102,26 @@ export const incrementList = asyncHandler(async (req, res) => {
 
   res.status(200).json(success("Increment List get Successful", increment));
 });
+
+// Request: DELETE
+// Route: Delete /api/v1/increment/delete/:id
+// Access: Public
+export const deleteIncrement = async (req, res) => {
+  const { incrementId } = req.params;
+
+  try {
+    const deleteIncrement = await IncrementModel.findByIdAndDelete({
+      _id: incrementId,
+    });
+
+    if (!deleteIncrement) {
+      return res.status(404).json(useErrorResponse("Increment does not exist"));
+    }
+
+    return res
+      .status(200)
+      .json(success("Incrment deleted Successfully", "", res.statusCode));
+  } catch (error) {
+    console.log("error", error);
+  }
+};

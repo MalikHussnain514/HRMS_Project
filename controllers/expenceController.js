@@ -16,8 +16,8 @@ import UsersModel from "../models/UsersModel.js";
 // Access: Public
 
 export const createExpence = asyncHandler(async (req, res, next) => {
-  const { userId, expenceDate, expencePurpose, expenceAmount, chequeNo } =
-    req.body;
+  const { expenceDate, expencePurpose, expenceAmount, chequeNo } = req.body;
+  const { userId } = req.params;
 
   const userExist = await EmployeeModel.findOne({ userId });
 
@@ -105,3 +105,26 @@ export const getAllExpences = asyncHandler(async (req, res) => {
 
   res.status(200).json(success("Expences List get Successful", expenses));
 });
+
+// Request: DELETE
+// Route: Delete /api/v1/expense/delete/:id
+// Access: Public
+export const deleteExpence = async (req, res) => {
+  const { expenceId } = req.params;
+
+  try {
+    const deleteExpence = await ExpenceModel.findByIdAndDelete({
+      _id: expenceId,
+    });
+
+    if (!deleteExpence) {
+      return res.status(404).json(useErrorResponse("Expense does not exist"));
+    }
+
+    return res
+      .status(200)
+      .json(success("Expense deleted Successfully", "", res.statusCode));
+  } catch (error) {
+    console.log("error", error);
+  }
+};

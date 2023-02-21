@@ -15,7 +15,8 @@ import UsersModel from "../models/UsersModel.js";
 // Route: POST /api/v1/holiday/addHoliday
 // Access: Public
 export const addHoliday = asyncHandler(async (req, res, next) => {
-  const { userId, holidayDate, description } = req.body;
+  const { holidayDate, description } = req.body;
+  const { userId } = req.params;
 
   const userExist = await EmployeeModel.findOne({ userId });
 
@@ -97,3 +98,26 @@ export const holidayList = asyncHandler(async (req, res) => {
 
   res.status(200).json(success("Holiday List get Successful", holidays));
 });
+
+// Request: DELETE
+// Route: Delete /api/v1/holiday/delete/:id
+// Access: Public
+export const deleteHoliday = async (req, res) => {
+  const { holidayId } = req.params;
+
+  try {
+    const deleteHoliday = await HolidayModel.findByIdAndDelete({
+      _id: holidayId,
+    });
+
+    if (!deleteHoliday) {
+      return res.status(404).json(useErrorResponse("Holiday does not exist"));
+    }
+
+    return res
+      .status(200)
+      .json(success("Holiday deleted Successfully", "", res.statusCode));
+  } catch (error) {
+    console.log("error", error);
+  }
+};

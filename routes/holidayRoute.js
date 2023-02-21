@@ -10,6 +10,7 @@ import {
   addHoliday,
   holidayList,
   updateHoliday,
+  deleteHoliday,
 } from "../controllers/holidayController.js";
 
 // validator
@@ -19,9 +20,10 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addHoliday", addHoliday);
+router.post("/addHoliday/:userId", addHoliday);
 router.get("/", holidayList);
 router.put("/update/:holidayId", updateHoliday);
+router.delete("/delete/:holidayId", deleteHoliday);
 
 // router.post("/login/:branchId", loginClient);
 

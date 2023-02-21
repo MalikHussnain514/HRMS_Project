@@ -8,8 +8,9 @@ const router = express.Router();
 // controller
 import {
   createOvertime,
-    updateOvertime,
-    getAllOvertime,
+  updateOvertime,
+  getAllOvertime,
+  deleteOvertime,
 } from "../controllers/overtimeController.js";
 
 // validator
@@ -19,9 +20,10 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addOvertime", createOvertime);
+router.post("/addOvertime/:userId", createOvertime);
 router.get("/", getAllOvertime);
 router.put("/update/:overtimeId", updateOvertime);
+router.delete("/delete/:overtimeId", deleteOvertime);
 
 // router.post("/login/:branchId", loginClient);
 

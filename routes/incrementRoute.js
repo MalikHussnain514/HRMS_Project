@@ -10,6 +10,7 @@ import {
   addIncrement,
   incrementList,
   updateIncrement,
+  deleteIncrement,
 } from "../controllers/incrementController.js";
 
 // validator
@@ -19,9 +20,10 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addIncrement", addIncrement);
+router.post("/addIncrement/:userId", addIncrement);
 router.get("/", incrementList);
 router.put("/update/:incrementId", updateIncrement);
+router.delete("/delete/:incrementId", deleteIncrement);
 
 // router.post("/login/:branchId", loginClient);
 

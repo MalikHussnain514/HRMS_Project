@@ -52,8 +52,20 @@ export const addEmployee = asyncHandler(async (req, res) => {
     workingDay,
     basicPay,
     gender,
-    addReference,
+    referenceId,
   } = req.body;
+
+  // const { referenceId } = req.params;
+
+  const userExist = await UsersModel.findOne({ _id: referenceId });
+
+  if (!userExist) {
+    return res
+      .status(409)
+      .json(
+        useErrorResponse("Employee does not exist with this Id", res.statusCode)
+      );
+  }
 
   const isExistWithContact = await UsersModel.findOne({ contact });
   const isExistWithEmail = await UsersModel.findOne({ email });
@@ -109,7 +121,7 @@ export const addEmployee = asyncHandler(async (req, res) => {
     workingDay,
     basicPay,
     gender,
-    addReference,
+    referenceId,
     companyId: companyId,
   });
 
@@ -124,7 +136,7 @@ export const addEmployee = asyncHandler(async (req, res) => {
     workingDay: employee.workingDay,
     basicPay: employee.basicPay,
     gender: employee.gender,
-    addReference: employee.addReference,
+    referenceId: employee.referenceId,
   };
 
   if (user && employee) {
@@ -192,7 +204,9 @@ export const authEmployee = asyncHandler(async (req, res) => {
 // Route: GET /api/employees/allemployees
 // Access: Private
 export const getAllEmployeesWithDetails = asyncHandler(async (req, res) => {
-  const employees = await EmployeeModel.find({}).populate("userId");
+  // const employees = await EmployeeModel.find({}).populate("userId");
+
+  // const employeeRef = await EmployeeModel.find({}).populate("referenceId");
   // const employees = await UsersModel.aggregate([
   //     {
   //       $lookup: {
@@ -211,9 +225,55 @@ export const getAllEmployeesWithDetails = asyncHandler(async (req, res) => {
   //       },
   //     },
   // ]);
+  const employees = await UsersModel.aggregate([
+    {
+      $lookup: {
+        from: "employees",
+        localField: "_id",
+        foreignField: "userId",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "referenceId",
+              foreignField: "_id",
+              pipeline: [
+                {
+                  $project: {
+                    password: 0,
+                    role: 0,
+                  },
+                },
+              ],
+              as: "referenceDetails",
+            },
+          },
+          {
+            $project: {
+              password: 0,
+              role: 0,
+            },
+          },
+        ],
+        as: "employeesData",
+      },
+    },
+    {
+      $match: {
+        "employeesData.0": { $exists: true },
+      },
+    },
+    {
+      $project: {
+        password: 0,
+        role: 0,
+      },
+    },
+  ]);
   const total = employees.length;
 
   res.status(200).json({ employees, totalNumberOfRecords: total });
+  // res.status(200).json({ expenses });
 });
 
 // Request: GET
@@ -254,3 +314,44 @@ export const updateEmployee = asyncHandler(async (req, res) => {
 
   res.status(202).json(success("Information updated Successfully"));
 });
+
+// Request: GET
+// Route: GET /api/v1/employees/profile/:employeeId
+// Access: Public
+export const getProfile = asyncHandler(async (req, res) => {
+  const { employeeId } = req.params;
+
+  const employee = await EmployeeModel.find({ _id: employeeId }).populate({
+    path: "userId",
+    select: "-password",
+  });
+
+  res.status(200).json(success("Get employee profile ", employee));
+});
+
+// Request: DELETE
+// Route: Delete /api/v1/employees/delete/:employeeId
+// Access: Public
+export const deleteEmployee = async (req, res) => {
+  const { employeeId } = req.params;
+
+  try {
+    const deleteUser = await UsersModel.findByIdAndDelete({
+      _id: employeeId,
+    });
+
+    const deleteRespectiveEmployee = await EmployeeModel.findOneAndDelete({
+      userId: employeeId,
+    });
+
+    if (!deleteUser) {
+      return res.status(404).json(useErrorResponse("Employee does not exist"));
+    }
+
+    return res
+      .status(200)
+      .json(success("Employee deleted Successfully", "", res.statusCode));
+  } catch (error) {
+    console.log("error", error);
+  }
+};

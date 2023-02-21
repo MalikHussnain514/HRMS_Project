@@ -12,6 +12,7 @@ import {
   //   getReferenceById,
   updateExpence,
   getAllExpences,
+  deleteExpence,
 } from "../controllers/expenceController.js";
 
 // validator
@@ -21,13 +22,12 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addExpence", createExpence);
+router.post("/addExpence/:userId", createExpence);
 router.get("/", getAllExpences);
 // router.get("/", getAllReferences);
 // router.get("/profile/:referenceId", getReferenceById);
-router.put(
-  "/update/:expenceId", updateExpence
-);
+router.put("/update/:expenceId", updateExpence);
+router.delete("/delete/:expenceId", deleteExpence);
 
 // router.post("/login/:branchId", loginClient);
 

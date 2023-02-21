@@ -16,7 +16,8 @@ import { success, useErrorResponse } from "../utils/apiResponse.js";
 // Access: Public
 
 export const addBonus = asyncHandler(async (req, res, next) => {
-  const { userId, bonusName, designation, bonusAmount, bonusMonth } = req.body;
+  const { bonusName, designation, bonusAmount, bonusMonth } = req.body;
+  const { userId } = req.params;
 
   const userExist = await EmployeeModel.findOne({ userId });
 
@@ -100,3 +101,26 @@ export const bonusList = asyncHandler(async (req, res) => {
 
   res.status(200).json(success("Bonus List get Successful", bonus));
 });
+
+// Request: DELETE
+// Route: Delete /api/v1/bonus/delete/:id
+// Access: Public
+export const deleteBonus = async (req, res) => {
+  const { bonusId } = req.params;
+
+  try {
+    const deleteBonus = await BonusModel.findByIdAndDelete({
+      _id: bonusId,
+    });
+
+    if (!deleteBonus) {
+      return res.status(404).json(useErrorResponse("Bonus does not exist"));
+    }
+
+    return res
+      .status(200)
+      .json(success("Bonus deleted Successfully", "", res.statusCode));
+  } catch (error) {
+    console.log("error", error);
+  }
+};

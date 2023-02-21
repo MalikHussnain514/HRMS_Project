@@ -10,6 +10,7 @@ import {
   addProvidentFund,
   providentFundList,
   updateProvidentFund,
+  deleteProvidentFund,
 } from "../controllers/providentFundController.js";
 
 // validator
@@ -19,9 +20,10 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addProvidentFund", addProvidentFund);
+router.post("/addProvidentFund/:userId", addProvidentFund);
 router.get("/", providentFundList);
 router.put("/update/:providentFundId", updateProvidentFund);
+router.delete("/delete/:providentFundId", deleteProvidentFund);
 
 // router.post("/login/:branchId", loginClient);
 

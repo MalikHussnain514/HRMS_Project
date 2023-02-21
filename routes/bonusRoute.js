@@ -10,6 +10,7 @@ import {
   addBonus,
   updateBonus,
   bonusList,
+  deleteBonus,
 } from "../controllers/bonusController.js";
 
 // validator
@@ -19,9 +20,10 @@ import {
 //   updateClientValidate,
 // } from "../validator/clientValidator.js";
 
-router.post("/addBonus", addBonus);
+router.post("/addBonus/:userId", addBonus);
 router.get("/", bonusList);
 router.put("/update/:bonusId", updateBonus);
+router.delete("/delete/:bonusId", deleteBonus);
 
 // router.post("/login/:branchId", loginClient);
 

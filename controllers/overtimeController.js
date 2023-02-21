@@ -16,8 +16,8 @@ import { success, useErrorResponse } from "../utils/apiResponse.js";
 // Access: Public
 
 export const createOvertime = asyncHandler(async (req, res, next) => {
-  const { userId, overtimeDate, designation, overtimeHours, overtimeAmount } =
-    req.body;
+  const { overtimeDate, designation, overtimeHours, overtimeAmount } = req.body;
+  const { userId } = req.params;
 
   const userExist = await EmployeeModel.findOne({ userId });
 
@@ -103,3 +103,26 @@ export const getAllOvertime = asyncHandler(async (req, res) => {
 
   res.status(200).json(success("Overtime List get Successful", overtime));
 });
+
+// Request: DELETE
+// Route: Delete /api/v1/overtime/delete/:id
+// Access: Public
+export const deleteOvertime = async (req, res) => {
+  const { overtimeId } = req.params;
+
+  try {
+    const deleteOverTime = await OvertimeModel.findByIdAndDelete({
+      _id: overtimeId,
+    });
+
+    if (!deleteOverTime) {
+      return res.status(404).json(useErrorResponse("OverTime does not exist"));
+    }
+
+    return res
+      .status(200)
+      .json(success("OverTime deleted Successfully", "", res.statusCode));
+  } catch (error) {
+    console.log("error", error);
+  }
+};

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const employeeSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
   companyId: {
@@ -27,8 +26,10 @@ const employeeSchema = new mongoose.Schema({
   gender: {
     type: String,
   },
-  addReference: {
-    type: [String],
+  referenceId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    // required: true,
   },
 });
 

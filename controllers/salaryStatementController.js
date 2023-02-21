@@ -19,12 +19,12 @@ export const addSalaryStatement = asyncHandler(async (req, res, next) => {
   const {
     salaryStatementDate,
     basicSalary,
-    userId,
     employeeType,
     designation,
     providentFund,
     grossSalary,
   } = req.body;
+  const { userId } = req.params;
 
   const userExist = await EmployeeModel.findOne({ userId });
 
@@ -121,3 +121,30 @@ export const salaryStatementList = asyncHandler(async (req, res) => {
     .status(200)
     .json(success("Salary Statement List get Successful", salaryStatement));
 });
+
+// Request: DELETE
+// Route: Delete /api/v1/salaryStatement/delete/:id
+// Access: Public
+export const deleteSalaryStatement = async (req, res) => {
+  const { salaryStatementId } = req.params;
+
+  try {
+    const deleteSalaryStatement = await SalaryStatementModel.findByIdAndDelete({
+      _id: salaryStatementId,
+    });
+
+    if (!deleteSalaryStatement) {
+      return res
+        .status(404)
+        .json(useErrorResponse("Salary Statement does not exist"));
+    }
+
+    return res
+      .status(200)
+      .json(
+        success("Salary Statement deleted Successfully", "", res.statusCode)
+      );
+  } catch (error) {
+    console.log("error", error);
+  }
+};
