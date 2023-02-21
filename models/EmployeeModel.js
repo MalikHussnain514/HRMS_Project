@@ -29,7 +29,6 @@ const employeeSchema = new mongoose.Schema({
   referenceId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
-    // required: true,
   },
 });
 
