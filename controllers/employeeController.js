@@ -55,16 +55,18 @@ export const addEmployee = asyncHandler(async (req, res) => {
     referenceId,
   } = req.body;
 
-  // const { referenceId } = req.params;
-
-  const userExist = await UsersModel.findOne({ _id: referenceId });
-
-  if (!userExist) {
-    return res
-      .status(409)
-      .json(
-        useErrorResponse("Employee does not exist with this Id", res.statusCode)
-      );
+  if (referenceId && mongoose.Types.ObjectId(referenceId) !== "") {
+    const userExist = await UsersModel.findOne({ _id: referenceId });
+    if (!userExist) {
+      return res
+        .status(409)
+        .json(
+          useErrorResponse(
+            "Employee does not exist with this Id",
+            res.statusCode
+          )
+        );
+    }
   }
 
   const isExistWithContact = await UsersModel.findOne({ contact });
@@ -112,7 +114,7 @@ export const addEmployee = asyncHandler(async (req, res) => {
 
   const employeeIdCount = (await EmployeeModel.find().count()) + 1;
   console.log("empCount1", employeeIdCount);
-
+  const reff = referenceId ?? "No Reff";
   const employee = await EmployeeModel.create({
     joiningDate,
     employeeId: employeeIdCount,
@@ -121,7 +123,7 @@ export const addEmployee = asyncHandler(async (req, res) => {
     workingDay,
     basicPay,
     gender,
-    referenceId,
+    reff,
     companyId: companyId,
   });
 
