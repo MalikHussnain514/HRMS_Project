@@ -102,6 +102,16 @@ export const bonusList = asyncHandler(async (req, res) => {
   res.status(200).json(success("Bonus List get Successful", bonus));
 });
 
+// Request: GET
+// Route: GET /api/v1/bonus/:userId
+// Access: Public
+export const bonusSingleEmployee = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const bonus = await BonusModel.find({ userId }).populate("userId");
+
+  res.status(200).json(success("Bonus List get Successful", bonus));
+});
+
 // Request: DELETE
 // Route: Delete /api/v1/bonus/delete/:id
 // Access: Public

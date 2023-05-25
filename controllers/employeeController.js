@@ -1,10 +1,6 @@
 import asyncHandler from "express-async-handler";
 import generateWebToken from "../utils/generateToken.js";
-// import crypto from "crypto";
 import dotenv from "dotenv";
-import { roles } from "../utils/enums.js";
-import bcrypt from "bcryptjs";
-// import https from "https";
 import mongoose from "mongoose";
 
 dotenv.config();
@@ -17,7 +13,6 @@ import AdminModel from "../models/AdminModel.js";
 
 // Utils
 import { success, useErrorResponse } from "../utils/apiResponse.js";
-// import { spaceRemoving } from "../utils/removeSpacing.js";
 
 export const addRole = asyncHandler(async (req, res) => {
   const { role, isActive } = req.body;
@@ -53,16 +48,18 @@ export const addEmployee = asyncHandler(async (req, res) => {
     basicPay,
     gender,
     referenceId,
+    image,
+    role,
   } = req.body;
 
-  if (referenceId && mongoose.Types.ObjectId(referenceId) !== "") {
+  if (referenceId) {
     const userExist = await UsersModel.findOne({ _id: referenceId });
     if (!userExist) {
       return res
         .status(409)
         .json(
           useErrorResponse(
-            "Employee does not exist with this Id",
+            "No User exist with this Reference Id",
             res.statusCode
           )
         );
@@ -92,15 +89,12 @@ export const addEmployee = asyncHandler(async (req, res) => {
         )
       );
   }
-  // const userId = "63c66cb9547c4e16a4e23c20";
   const userId = req.user._id;
-  console.log("userId from here", userId);
   const { companyId } = await AdminModel.findOne({
     userId: mongoose.Types.ObjectId(userId),
   });
-  console.log("first", companyId);
 
-  const roleId = await RoleModel.findOne({ role: roles.EMPLOYEE });
+  const roleIs = await RoleModel.findOne({ role });
 
   // Create new user
 
@@ -109,12 +103,10 @@ export const addEmployee = asyncHandler(async (req, res) => {
     contact,
     email,
     password,
-    role: roleId._id,
+    role: roleIs._id,
   });
 
   const employeeIdCount = (await EmployeeModel.find().count()) + 1;
-  console.log("empCount1", employeeIdCount);
-  const reff = referenceId ?? "No Reff";
   const employee = await EmployeeModel.create({
     joiningDate,
     employeeId: employeeIdCount,
@@ -123,9 +115,13 @@ export const addEmployee = asyncHandler(async (req, res) => {
     workingDay,
     basicPay,
     gender,
-    reff,
     companyId: companyId,
+    image,
   });
+
+  if (referenceId) {
+    await EmployeeModel.updateOne({ _id: employee._id }, { referenceId });
+  }
 
   const data = {
     _id: employee._id,
@@ -138,7 +134,7 @@ export const addEmployee = asyncHandler(async (req, res) => {
     workingDay: employee.workingDay,
     basicPay: employee.basicPay,
     gender: employee.gender,
-    referenceId: employee.referenceId,
+    // referenceId: employee.referenceId,
   };
 
   if (user && employee) {
@@ -206,27 +202,10 @@ export const authEmployee = asyncHandler(async (req, res) => {
 // Route: GET /api/employees/allemployees
 // Access: Private
 export const getAllEmployeesWithDetails = asyncHandler(async (req, res) => {
-  // const employees = await EmployeeModel.find({}).populate("userId");
+  const page = parseInt(req.query.page) || 1; // default to 1 if no query param is provided
+  const pageSize = parseInt(req.query.pageSize) || 8; // default to 10 if no query param is provided
+  const { search } = req.query;
 
-  // const employeeRef = await EmployeeModel.find({}).populate("referenceId");
-  // const employees = await UsersModel.aggregate([
-  //     {
-  //       $lookup: {
-  //         from: "employees",
-  //         localField: "_id",
-  //         foreignField: "userId",
-  //         as: "employeeData",
-  //       },
-  //     },
-  //     {
-  //       $lookup: {
-  //         from: "admins",
-  //         localField: "_id",
-  //         foreignField: "userId",
-  //         as: "adminsData",
-  //       },
-  //     },
-  // ]);
   const employees = await UsersModel.aggregate([
     {
       $lookup: {
@@ -261,9 +240,12 @@ export const getAllEmployeesWithDetails = asyncHandler(async (req, res) => {
       },
     },
     {
-      $match: {
-        "employeesData.0": { $exists: true },
-      },
+      $match: search
+        ? {
+            fullName: { $regex: `^${search}`, $options: "i" },
+            "employeesData.0": { $exists: true },
+          }
+        : { "employeesData.0": { $exists: true } },
     },
     {
       $project: {
@@ -271,28 +253,62 @@ export const getAllEmployeesWithDetails = asyncHandler(async (req, res) => {
         role: 0,
       },
     },
+    {
+      $facet: {
+        data: [{ $skip: (page - 1) * pageSize }, { $limit: pageSize }],
+        count: [
+          {
+            $group: {
+              _id: null,
+              count: { $sum: 1 },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              count: 1,
+            },
+          },
+        ],
+      },
+    },
   ]);
-  const total = employees.length;
 
-  res.status(200).json({ employees, totalNumberOfRecords: total });
-  // res.status(200).json({ expenses });
+  const totalPages = Math.ceil(employees[0]?.count[0]?.count || 0 / pageSize);
+
+  res.status(200).json({
+    employees,
+    totalNumberOfRecords: employees[0]?.count[0]?.count || 0,
+    totalPages,
+    page,
+  });
 });
 
 // Request: GET
 // Route: GET /api/employees/allemployees
 // Access: Private
 export const getAllEmployees = asyncHandler(async (req, res) => {
-  const employees = await EmployeeModel.find({})
-    .populate("userId", "fullName")
-    .select("_id");
+  const employees = await EmployeeModel.find().populate("userId");
 
   res.status(200).json(employees);
 });
 
+// Request: GET
+// Route: GET /api/employees/get/;employeeId
+// Access: Private
+export const getSingleEmployees = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const employee = await EmployeeModel.find({ userId: id }).populate("userId");
+
+  res.status(200).json(success("Get employee profile", employee));
+});
+
+// Request: GET
+// Route: GET /api/employees/updateEmployee/employeeId
+// Access: Private
 export const updateEmployee = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const { userDetail, employeeDetail } = req.body;
-  // console.log(userId, userDetail, employeeDetail);
 
   const updatedUser = await UsersModel.updateOne(
     { _id: userId },
@@ -320,16 +336,16 @@ export const updateEmployee = asyncHandler(async (req, res) => {
 // Request: GET
 // Route: GET /api/v1/employees/profile/:employeeId
 // Access: Public
-export const getProfile = asyncHandler(async (req, res) => {
-  const { employeeId } = req.params;
+// export const getProfile = asyncHandler(async (req, res) => {
+//   const { employeeId } = req.params;
 
-  const employee = await EmployeeModel.find({ _id: employeeId }).populate({
-    path: "userId",
-    select: "-password",
-  });
+//   const employee = await EmployeeModel.findById({ _id: employeeId }).populate({
+//     path: "userId",
+//     select: "-password",
+//   });
 
-  res.status(200).json(success("Get employee profile ", employee));
-});
+//   res.status(200).json(success("Get employee profile ", employee));
+// });
 
 // Request: DELETE
 // Route: Delete /api/v1/employees/delete/:employeeId
@@ -352,7 +368,7 @@ export const deleteEmployee = async (req, res) => {
 
     return res
       .status(200)
-      .json(success("Employee deleted Successfully", "", res.statusCode));
+      .json(success("Employee deleted Successfully", res.statusCode));
   } catch (error) {
     console.log("error", error);
   }

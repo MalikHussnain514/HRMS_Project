@@ -105,6 +105,22 @@ export const providentFundList = asyncHandler(async (req, res) => {
     .json(success("Provident Fund List get Successful", providentFund));
 });
 
+// Request: GET
+// Route: GET /api/v1/providentFund/
+// Access: Public
+
+export const singleEmployeeProvidentFund = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  const providentFund = await ProvidentFundModel.find({ userId }).populate(
+    "userId"
+  );
+
+  res
+    .status(200)
+    .json(success("Provident Fund Single get Successful", providentFund));
+});
+
 // Request: DELETE
 // Route: Delete /api/v1/providentFund/delete/:id
 // Access: Public

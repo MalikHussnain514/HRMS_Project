@@ -9,6 +9,7 @@ const router = express.Router();
 import {
   addProvidentFund,
   providentFundList,
+  singleEmployeeProvidentFund,
   updateProvidentFund,
   deleteProvidentFund,
 } from "../controllers/providentFundController.js";
@@ -22,6 +23,7 @@ import {
 
 router.post("/addProvidentFund/:userId", addProvidentFund);
 router.get("/", providentFundList);
+router.get("/:userId", singleEmployeeProvidentFund);
 router.put("/update/:providentFundId", updateProvidentFund);
 router.delete("/delete/:providentFundId", deleteProvidentFund);
 

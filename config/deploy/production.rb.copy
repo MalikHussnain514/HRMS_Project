@@ -1,7 +1,0 @@
-server "", user: "", roles: %w{app db web}, port: 8282
-
-set :application, ""
-
-set :deploy_to, ""
-
-set :repo_url, ""

@@ -14,7 +14,7 @@ import { success, useErrorResponse } from "../utils/apiResponse.js";
 // Access: Public
 
 export const createClient = asyncHandler(async (req, res, next) => {
-  const { joiningDate, gender, fullName, contact, email, clientType } =
+  const { joiningDate, gender, fullName, contact, email, clientType, image } =
     req.body;
 
   // space removing
@@ -48,6 +48,7 @@ export const createClient = asyncHandler(async (req, res, next) => {
     contact,
     email,
     clientType,
+    image,
   });
 
   const data = {
@@ -129,14 +130,14 @@ export const updateClient = asyncHandler(async (req, res) => {
   //   const isExists = await UserModel.findOne({ contactNumber: contact });
 
   //   if (isExists) {
-      // return res
-      //   .status(409)
-      //   .json(
-      //     useErrorResponse(
-      //       "Client Already exist with this phone number",
-      //       res.statusCode
-      //     )
-      //   );
+  // return res
+  //   .status(409)
+  //   .json(
+  //     useErrorResponse(
+  //       "Client Already exist with this phone number",
+  //       res.statusCode
+  //     )
+  //   );
   //   }
   // }
 
@@ -168,8 +169,8 @@ export const deleteClient = async (req, res) => {
   try {
     const deleteClient = await ClientModel.findByIdAndDelete({ _id: clientId });
 
-    if(!deleteClient){
-      return res.status(404).json(useErrorResponse('Client does not exist'));
+    if (!deleteClient) {
+      return res.status(404).json(useErrorResponse("Client does not exist"));
     }
 
     return res

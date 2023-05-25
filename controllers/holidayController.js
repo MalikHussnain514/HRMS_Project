@@ -77,7 +77,7 @@ export const updateHoliday = asyncHandler(async (req, res) => {
 });
 
 // Request: GET
-// Route: GET /api/v1/salaryholidayStatement/
+// Route: GET /api/v1/holiday/
 // Access: Public
 export const holidayList = asyncHandler(async (req, res) => {
   const holidays = await UsersModel.aggregate([
@@ -97,6 +97,16 @@ export const holidayList = asyncHandler(async (req, res) => {
   ]);
 
   res.status(200).json(success("Holiday List get Successful", holidays));
+});
+
+// Request: GET
+// Route: GET /api/v1/holiday/:userId
+// Access: Public
+export const holidaySingle = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const holiday = await HolidayModel.find({ userId }).populate("userId");
+
+  res.status(200).json(success("Holiday List get Successful", holiday));
 });
 
 // Request: DELETE

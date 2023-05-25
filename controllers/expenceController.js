@@ -106,6 +106,17 @@ export const getAllExpences = asyncHandler(async (req, res) => {
   res.status(200).json(success("Expences List get Successful", expenses));
 });
 
+// Request: GET
+// Route: GET /api/v1/expence/:userId
+// Access: Public
+
+export const getSingleUserExpences = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const expenses = await ExpenceModel.find({ userId }).populate("userId");
+
+  res.status(200).json(success("Expences List get Successful", expenses));
+});
+
 // Request: DELETE
 // Route: Delete /api/v1/expense/delete/:id
 // Access: Public

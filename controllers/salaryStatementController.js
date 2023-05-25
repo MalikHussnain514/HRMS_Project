@@ -84,7 +84,7 @@ export const updateSalaryStatement = asyncHandler(async (req, res) => {
       );
   }
 
-  const updatedSalaryStatement = await SalaryStatementModel.updateOne(
+  await SalaryStatementModel.updateOne(
     { _id: salaryStatementId },
     {
       $set: {
@@ -120,6 +120,21 @@ export const salaryStatementList = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(success("Salary Statement List get Successful", salaryStatement));
+});
+
+// Request: GET
+// Route: GET /api/v1/salaryStatement/:userId
+// Access: Public
+export const singleEmployeeSalaryStatement = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  const salaryStatement = await SalaryStatementModel.find({ userId }).populate(
+    "userId"
+  );
+
+  res
+    .status(200)
+    .json(success("Salary Statement Single get Successful", salaryStatement));
 });
 
 // Request: DELETE

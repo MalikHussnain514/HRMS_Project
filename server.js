@@ -16,7 +16,6 @@ import connectDB from "./config/db.js";
 import adminRoute from "./routes/adminRoute.js";
 import employeeRoute from "./routes/employeeRoute.js";
 import userRoute from "./routes/userRoute.js";
-
 import clientRoute from "./routes/clientRoute.js";
 import referenceRoute from "./routes/referenceRoute.js";
 import expenceRoute from "./routes/expenceRoute.js";
@@ -26,8 +25,9 @@ import salaryStatementRoute from "./routes/salaryStatementRoute.js";
 import holidayRoute from "./routes/holidayRoute.js";
 import providentFundRoute from "./routes/providentFundRoute.js";
 import incrementRoute from "./routes/incrementRoute.js";
-
-// import imageUploadRoute from "./routes/imageUploadRoute.js";
+import leaveManagementRoute from "./routes/leaveManagementRoute.js";
+import attendenceManagementRoute from "./routes/attendenceManagementRoute.js";
+import imageUploadRoute from "./routes/imageUploadRoute.js";
 
 // cors options
 const corsOptions = {
@@ -42,12 +42,7 @@ connectDB();
 const app = express();
 
 app.use(bodyParser.json());
-// app.use(
-//   bodyParser.urlencoded({
-//     extended: true,
-//   })
-// );
-// app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 
 app.use("/uploads/images", express.static(path.join("uploads", "images")));
@@ -56,15 +51,10 @@ app.get("/", (req, res) => {
   res.send("App is running .... ");
 });
 
-// if (process.env.NODE_ENV == "development") {
-//   app.use(morgan("dev"));
-// }
-
 app.use("/api/v1/admins", adminRoute);
 app.use("/api/v1/employees", employeeRoute);
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/role", employeeRoute);
-
 app.use("/api/v1/client", clientRoute);
 app.use("/api/v1/reference", referenceRoute);
 app.use("/api/v1/expence", expenceRoute);
@@ -74,23 +64,9 @@ app.use("/api/v1/salaryStatement", salaryStatementRoute);
 app.use("/api/v1/holiday", holidayRoute);
 app.use("/api/v1/providentFund", providentFundRoute);
 app.use("/api/v1/increment", incrementRoute);
-
-// app.use("/api/v1/image-upload", imageUploadRoute);
-
-// app.use((error, req, res, next) => {
-//   if (req.file) {
-//     fs.unlink(req.file.path, (err) => {
-//       console.log("hello", err);
-//     });
-//   }
-//   if (res.headerSent) {
-//     return next(error);
-//   }
-//   res.status(error.code || 500);
-//   res.json({ message: error.message || "An unknown error occurred!" });
-// });
-
-// app.use(errorHandler);
+app.use("/api/v1/leaveManagement", leaveManagementRoute);
+app.use("/api/v1/attendenceManagement", attendenceManagementRoute);
+app.use("/api/v1/image-upload", imageUploadRoute);
 
 const PORT = process.env.PORT || 5000;
 

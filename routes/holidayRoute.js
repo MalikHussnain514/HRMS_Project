@@ -9,6 +9,7 @@ const router = express.Router();
 import {
   addHoliday,
   holidayList,
+  holidaySingle,
   updateHoliday,
   deleteHoliday,
 } from "../controllers/holidayController.js";
@@ -22,6 +23,7 @@ import {
 
 router.post("/addHoliday/:userId", addHoliday);
 router.get("/", holidayList);
+router.get("/:userId", holidaySingle);
 router.put("/update/:holidayId", updateHoliday);
 router.delete("/delete/:holidayId", deleteHoliday);
 

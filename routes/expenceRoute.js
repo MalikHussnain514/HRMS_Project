@@ -8,10 +8,9 @@ const router = express.Router();
 // controller
 import {
   createExpence,
-  //   getAllReferences,
-  //   getReferenceById,
   updateExpence,
   getAllExpences,
+  getSingleUserExpences,
   deleteExpence,
 } from "../controllers/expenceController.js";
 
@@ -24,8 +23,7 @@ import {
 
 router.post("/addExpence/:userId", createExpence);
 router.get("/", getAllExpences);
-// router.get("/", getAllReferences);
-// router.get("/profile/:referenceId", getReferenceById);
+router.get("/:userId", getSingleUserExpences);
 router.put("/update/:expenceId", updateExpence);
 router.delete("/delete/:expenceId", deleteExpence);
 

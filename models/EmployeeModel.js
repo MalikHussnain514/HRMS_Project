@@ -30,6 +30,9 @@ const employeeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
+  image: {
+    type: String,
+  },
 });
 
 const EmployeeModel = mongoose.model("employee", employeeSchema);

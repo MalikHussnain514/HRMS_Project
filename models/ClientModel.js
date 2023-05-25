@@ -26,8 +26,10 @@ const clientSchema = new mongoose.Schema({
   clientType: {
     type: String,
   },
+  image: {
+    type: String,
+  },
 });
-
 
 const ClientModel = mongoose.model("client", clientSchema);
 

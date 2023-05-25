@@ -103,6 +103,75 @@ export const incrementList = asyncHandler(async (req, res) => {
   res.status(200).json(success("Increment List get Successful", increment));
 });
 
+// Request: GET
+// Route: GET /api/v1/increment/:userId
+// Access: Public
+
+export const singleEmployeeIncrement = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  const increment = await IncrementModel.find({ userId }).populate("userId");
+
+  // increment = JSON.parse(JSON.stringify(increment));
+  // increment = increment.map((inc) => {
+  //   const { userId } = inc;
+  //   userId["name"] = userId.fullName;
+  //   delete userId.fullName;
+  //   return {
+  //     ...inc,
+  //     userId,
+  //   };
+  // });
+
+  // for (let i = 0; i < increment.length; i++) {
+  //   increment[i].userId.name = increment[i].userId.fullName;
+  //   delete increment[i].userId.fullName;
+  // }
+
+  res.status(200).json(success("Increment Single Employee get", increment));
+});
+
+// export const singleEmployeeIncrement = asyncHandler(async (req, res) => {
+//   const { userId } = req.params;
+
+//   const increments = await IncrementModel.aggregate([
+//     // Match increments for specified user ID
+//     { $match: { userId: mongoose.Types.ObjectId(userId) } },
+//     // Group increments by user ID and create array of increments
+//     {
+//       $group: {
+//         _id: "$userId",
+//         increments: {
+//           $push: {
+//             incrementDate: "$incrementDate",
+//             incrementAmount: "$incrementAmount",
+//             incrementPurpose: "$incrementPurpose",
+//           },
+//         },
+//         user: { $first: "$userId" },
+//       },
+//     },
+//     // Populate user object
+//     {
+//       $lookup: {
+//         from: "users",
+//         localField: "user",
+//         foreignField: "_id",
+//         as: "user",
+//       },
+//     },
+//     {
+//       $project: {
+//         "user.password": 0,
+//         "user.role": 0,
+//       },
+//     },
+//     { $unwind: "$user" },
+//   ]);
+
+//   res.status(200).json(success("Increment Single Employee get", increments[0]));
+// });
+
 // Request: DELETE
 // Route: Delete /api/v1/increment/delete/:id
 // Access: Public

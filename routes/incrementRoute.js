@@ -9,6 +9,7 @@ const router = express.Router();
 import {
   addIncrement,
   incrementList,
+  singleEmployeeIncrement,
   updateIncrement,
   deleteIncrement,
 } from "../controllers/incrementController.js";
@@ -22,6 +23,7 @@ import {
 
 router.post("/addIncrement/:userId", addIncrement);
 router.get("/", incrementList);
+router.get("/:userId", singleEmployeeIncrement);
 router.put("/update/:incrementId", updateIncrement);
 router.delete("/delete/:incrementId", deleteIncrement);
 

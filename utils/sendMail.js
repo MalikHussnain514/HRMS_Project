@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-const sendMail = async options => {
+const sendMail = async (options) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,

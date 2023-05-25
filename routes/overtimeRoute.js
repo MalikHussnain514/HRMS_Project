@@ -10,6 +10,7 @@ import {
   createOvertime,
   updateOvertime,
   getAllOvertime,
+  getOvertimeSingleUser,
   deleteOvertime,
 } from "../controllers/overtimeController.js";
 
@@ -22,6 +23,7 @@ import {
 
 router.post("/addOvertime/:userId", createOvertime);
 router.get("/", getAllOvertime);
+router.get("/:userId", getOvertimeSingleUser);
 router.put("/update/:overtimeId", updateOvertime);
 router.delete("/delete/:overtimeId", deleteOvertime);
 

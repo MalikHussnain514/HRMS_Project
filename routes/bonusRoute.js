@@ -10,6 +10,7 @@ import {
   addBonus,
   updateBonus,
   bonusList,
+  bonusSingleEmployee,
   deleteBonus,
 } from "../controllers/bonusController.js";
 
@@ -22,6 +23,7 @@ import {
 
 router.post("/addBonus/:userId", addBonus);
 router.get("/", bonusList);
+router.get("/:userId", bonusSingleEmployee);
 router.put("/update/:bonusId", updateBonus);
 router.delete("/delete/:bonusId", deleteBonus);
 

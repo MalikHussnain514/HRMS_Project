@@ -9,6 +9,7 @@ const router = express.Router();
 import {
   addSalaryStatement,
   salaryStatementList,
+  singleEmployeeSalaryStatement,
   updateSalaryStatement,
   deleteSalaryStatement,
 } from "../controllers/salaryStatementController.js";
@@ -22,6 +23,7 @@ import {
 
 router.post("/addSalaryStatement/:userId", addSalaryStatement);
 router.get("/", salaryStatementList);
+router.get("/:userId", singleEmployeeSalaryStatement);
 router.put("/update/:salaryStatementId", updateSalaryStatement);
 router.delete("/delete/:salaryStatementId", deleteSalaryStatement);
 

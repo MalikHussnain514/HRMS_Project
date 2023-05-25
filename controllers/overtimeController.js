@@ -104,6 +104,17 @@ export const getAllOvertime = asyncHandler(async (req, res) => {
   res.status(200).json(success("Overtime List get Successful", overtime));
 });
 
+// Request: GET
+// Route: GET /api/v1/overtime/:userId
+// Access: Public
+export const getOvertimeSingleUser = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+
+  const overtime = await OvertimeModel.find({ userId }).populate("userId");
+
+  res.status(200).json(success("Overtime Single get Successful", overtime));
+});
+
 // Request: DELETE
 // Route: Delete /api/v1/overtime/delete/:id
 // Access: Public

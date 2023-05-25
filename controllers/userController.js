@@ -25,8 +25,6 @@ export const userLogin = asyncHandler(async (req, res) => {
   }
 
   const employee = await UsersModel.findOne({ email }).populate("role");
-  // const employeeRole = await UsersModel.findOne({ email }).populate("role");
-  // console.log("role is here", employeeRole);
 
   if (!employee) {
     return res

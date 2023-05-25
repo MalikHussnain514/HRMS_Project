@@ -35,6 +35,7 @@
     "node-cron": "^3.0.0",
     "nodemailer": "^6.6.1",
     "nodemon": "^2.0.15",
+    "sharp": "^0.32.1",
     "slugify": "^1.6.5",
     "twilio": "^3.75.1",
     "uuid": "^8.3.2"

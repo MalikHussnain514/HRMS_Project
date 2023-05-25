@@ -39,8 +39,15 @@ import EmployeeModel from "../models/EmployeeModel.js";
 // Route: POST /api/v1/users/register
 // Access: Public
 export const adminRegister = asyncHandler(async (req, res) => {
-  const { companyName, fullName, email, contact, password, employeeStrength } =
-    req.body;
+  const {
+    companyName,
+    fullName,
+    email,
+    contact,
+    password,
+    employeeStrength,
+    image,
+  } = req.body;
 
   // Check if admin is exist
 
@@ -87,6 +94,7 @@ export const adminRegister = asyncHandler(async (req, res) => {
   const admin = await AdminModel.create({
     userId: user._id,
     companyId: company._id,
+    image,
   });
 
   const data = {
