@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+mongoose.set("strictQuery", false);
+
 const connectDB = async () => {
   try {
     const connect = await mongoose.connect(process.env.MONGOURI, {
@@ -11,7 +13,7 @@ const connectDB = async () => {
 
     console.log(`DataBase Connected at ${connect.connection.host}`);
   } catch (error) {
-    console.log("DataBase connection error", error.message);
+    console.log("DataBase Connection Error", error.message);
     process.exit(1);
   }
 };
